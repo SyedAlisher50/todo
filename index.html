@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .input-group input, .input-group textarea, .input-group button {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .input-group input, .input-group textarea {
+      flex: 1;
+    }
+
+    .input-group button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .input-group button:hover {
+      background: #45a049;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #f4f4f4;
+    }
+
+    .task-complete {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .actions button.edit {
+      color: #2196F3;
+    }
+
+    .actions button.delete {
+      color: #f44336;
+    }
+
+    .actions button.complete {
+      color: #4CAF50;
+    }
+
+    .actions button:hover {
+      opacity: 0.8;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Syed Ali's To-Do List</h1>
+    <div class="input-group">
+      <input type="text" id="task-title" placeholder="Task Title">
+      <textarea id="task-description" placeholder="Task Description"></textarea>
+      <input type="time" id="task-time">
+      <button id="add-task"><i class="fas fa-plus"></i> Add Task</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Time</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="task-list">
+        <!-- Tasks will be added here dynamically -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const taskList = document.getElementById('task-list');
+    const taskTitle = document.getElementById('task-title');
+    const taskDescription = document.getElementById('task-description');
+    const taskTime = document.getElementById('task-time');
+    const addTaskButton = document.getElementById('add-task');
+
+    let tasks = [];
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+      tasks.forEach((task, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="${task.complete ? 'task-complete' : ''}">${task.title}</td>
+          <td class="${task.complete ? 'task-complete' : ''}">${task.description}</td>
+          <td class="${task.complete ? 'task-complete' : ''}">${task.time}</td>
+          <td class="actions">
+            <button class="complete" onclick="toggleComplete(${index})">
+              <i class="fas ${task.complete ? 'fa-undo' : 'fa-check'}"></i>
+            </button>
+            <button class="edit" onclick="editTask(${index})"><i class="fas fa-edit"></i></button>
+            <button class="delete" onclick="deleteTask(${index})"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        taskList.appendChild(row);
+      });
+    }
+
+    function addTask() {
+      const title = taskTitle.value.trim();
+      const description = taskDescription.value.trim();
+      const time = taskTime.value;
+
+      if (title && description && time) {
+        tasks.push({ title, description, time, complete: false });
+        renderTasks();
+        taskTitle.value = '';
+        taskDescription.value = '';
+        taskTime.value = '';
+      } else {
+        alert('Please fill all fields!');
+      }
+    }
+
+    function toggleComplete(index) {
+      tasks[index].complete = !tasks[index].complete;
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const task = tasks[index];
+      taskTitle.value = task.title;
+      taskDescription.value = task.description;
+      taskTime.value = task.time;
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    addTaskButton.addEventListener('click', addTask);
+  </script>
+</body>
+</html>
